@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reptile Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <style>
+        body {
+            font-family: Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #461D7C;
+            color: #FDD023;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #search {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        #searchButton {
+            width: 100px;
+        }
+        #searchResults {
+            text-align: center;
+        }
+       .result-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .result-table th {
+            background-color: #f2f2f2;
+            padding: 10px;
+            text-align: center; /* Align headers to center */
+        }
+
+        .result-table th:first-child {
+            text-align: left;
+        }
+
+        .result-table td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .result-table td:first-child {
+            text-align: left;
+        }
+      
+        h1 {
+            text-align: center;
+        }
+      
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+<h1>LSUS Museum of Life Sciences</h1>
+<div class="container">
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Enter a species name">
+        <button id="searchButton">Search</button>
+    </div>
+
+    <div id="searchResults"></div>
+</div>
+
+<script>
+$(document).ready(function() {
+    var specimenData = [
+        { commonName: "Green Anole", scientificName: "Anolis carolinensis", specimenType: "Full skeleton" },
+        { commonName: "Ball Python", scientificName: "Python regius", specimenType: "Full skeleton" },
+        { commonName: "Leopard Gecko", scientificName: "Eublepharis macularius", specimenType: "Full skeleton" },
+        { commonName: "Bearded Dragon", scientificName: "Pogona vitticeps", specimenType: "Full skeleton" },
+        { commonName: "Corn Snake", scientificName: "Pantherophis guttatus", specimenType: "Full skeleton" },
+        { commonName: "Red-eared Slider", scientificName: "Trachemys scripta elegans", specimenType: "Full skeleton" },
+        { commonName: "Western Diamondback Rattlesnake", scientificName: "Crotalus atrox", specimenType: "Full skeleton" },
+        { commonName: "Tokay Gecko", scientificName: "Gekko gecko", specimenType: "Full skeleton" },
+        { commonName: "Blue-tongued Skink", scientificName: "Tiliqua scincoides", specimenType: "Full skeleton" },
+        { commonName: "Nile Crocodile", scientificName: "Crocodylus niloticus", specimenType: "Full skeleton" }
+    ];
+
+    var specimenNames = specimenData.map(specimen => specimen.commonName);
+
+    $("#search").autocomplete({
+        source: specimenNames,
+        minLength: 1,
+        select: function(event, ui) {
+            var selectedCommonName = ui.item.value;
+            var selectedSpecimen = specimenData.find(specimen => specimen.commonName === selectedCommonName);
+            displayResult(selectedSpecimen);
+        }
+    });
+
+    $("#searchButton").click(function() {
+        var searchTerm = $("#search").val().toLowerCase();
+        var results = specimenData.filter(specimen =>
+            Object.values(specimen).some(value => value.toLowerCase().includes(searchTerm))
+        );
+
+        if (results.length > 0) {
+            displayResult(results[0]); // Display the first matching result
+        } else {
+            displayNoResults();
+        }
+    });
+
+    function displayResult(specimen) {
+        var searchResultsDiv = $("#searchResults");
+        searchResultsDiv.empty();
+
+        var resultText = "<p><strong>Common Name:</strong> " + specimen.commonName + "</p>" +
+                         "<p><strong>Scientific Name:</strong> " + specimen.scientificName + "</p>" +
+                         "<p><strong>Specimen Type:</strong> " + specimen.specimenType + "</p>" ;
+        
+        searchResultsDiv.html(resultText);
+    }
+
+    function displayNoResults() {
+        var searchResultsDiv = $("#searchResults");
+        searchResultsDiv.html("<p>No results found.</p>");
+    }
+});
+
+
+</script>
+
+</body>
+</html>
